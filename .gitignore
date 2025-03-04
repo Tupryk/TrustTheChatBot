@@ -1,0 +1,8 @@
+__pycache__/
+scene_images/
+outcmaes/
+z.log.global
+z.komoReport.plt
+z.komoData
+z.plotcmd
+chat_log.json
