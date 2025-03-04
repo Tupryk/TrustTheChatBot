@@ -1,0 +1,39 @@
+def build_bridge():
+    # Get object properties
+    red_block = getObj('block_red')
+    green_block = getObj('block_green')
+    blue_block = getObj('block_blue')
+
+    # Determine the blocks to use as vertical supports and the horizontal block
+    vertical_block1 = red_block
+    vertical_block2 = green_block
+    horizontal_block = blue_block
+
+    # Calculate the distance for the vertical blocks
+    vertical_spacing = horizontal_block.size.x + PLACEHOLDER_FLOAT  # Add a small buffer (_FLOAT_)
+
+    # Calculate positions for the vertical blocks
+    vertical1_x = vertical_block1.pos.x
+    vertical1_y = vertical_block1.pos.y
+
+    vertical2_x = vertical1_x + vertical_spacing
+    vertical2_y = vertical1_y
+
+    # Calculate position for the horizontal block
+    horizontal_x = (vertical1_x + vertical2_x) / 2  # Centered between vertical blocks
+    horizontal_y = vertical1_y
+    horizontal_z = vertical_block1.size.z + horizontal_block.size.z / 2 + PLACEHOLDER_FLOAT  # On top of vertical blocks
+
+    # Build the bridge
+    # Place first vertical block
+    pick('block_red')
+    place(vertical1_x, vertical1_y, z=vertical_block1.size.z / 2)
+
+    # Place second vertical block
+    pick('block_green')
+    place(vertical2_x, vertical2_y, z=vertical_block2.size.z / 2)
+
+    # Place horizontal block
+    pick('block_blue')
+    place(horizontal_x, horizontal_y, z=horizontal_z, rotated=True)
+    

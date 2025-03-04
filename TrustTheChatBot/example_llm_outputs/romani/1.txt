@@ -1,0 +1,24 @@
+def build_bridge():
+    # Get object parameters
+    red_block = getObj("block_red")
+    green_block = getObj("block_green")
+    blue_block = getObj("block_blue")
+    
+    # Determine positions for vertical support blocks
+    support_x_offset = blue_block.size.x / 2 + red_block.size.x / 2 + PLACEHOLDER_FLOAT
+    support1_x = blue_block.pos.x - support_x_offset
+    support2_x = blue_block.pos.x + support_x_offset
+    support_y = blue_block.pos.y + PLACEHOLDER_FLOAT
+    support_z = red_block.size.z / 2  # Place directly on the table
+    
+    # Place vertical support blocks
+    pick("block_red")
+    place(support1_x, support_y, support_z)
+    
+    pick("block_green")
+    place(support2_x, support_y, support_z)
+    
+    # Place horizontal block on top
+    bridge_z = support_z + red_block.size.z / 2 + blue_block.size.z / 2 + PLACEHOLDER_FLOAT
+    pick("block_blue")
+    place(blue_block.pos.x, support_y, bridge_z, rotated=True, yaw=PLACEHOLDER_FLOAT)
