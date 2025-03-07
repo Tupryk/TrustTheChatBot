@@ -1,0 +1,15 @@
+# Human output
+def pour_beer():
+    # Get objects
+    beer_can = getObj("beer")
+    glass = getObj("glass")
+
+    # Calculate target positions
+    beer_target_x = glass.pos.x - 0.03 # PLACEHOLDER_FLOAT
+    beer_target_y = glass.pos.y
+    beer_target_z = glass.pos.z + glass.size.z + 0.05 # PLACEHOLDER_FLOAT
+    beer_rot_target_x = 3.141 + 2.0 # PLACEHOLDER_FLOAT
+
+    # Pick beer
+    pick("beer")
+    place(beer_target_x, beer_target_y, beer_target_z) #, rot_x=beer_rot_target_x)
