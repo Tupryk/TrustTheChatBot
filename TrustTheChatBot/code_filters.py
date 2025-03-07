@@ -6,11 +6,15 @@ def cleanup_highlvl_func(original_func: str, compute_collisions: bool=True, visu
 
     # Create the interface with the robot
     new_line = f"    env = RobotEnviroment(C, visuals={visuals}, verbose=0, compute_collisions={compute_collisions})"
-    lines.insert(1, new_line)
+    for i, line in enumerate(lines):
+        if line.strip().startswith("def "):
+            insert_index = i + 1
+            break
+    lines.insert(insert_index, new_line)
 
     # Execute the function if it is not yet being executed in the code
-    if lines[-1].startswith(" "*4) or lines[-1].startswith("\t"):
-        execute_command = lines[0].replace("def ", "").replace(":", "")
+    if lines[-1].startswith(" "*4) or lines[-1].startswith("\t") or lines[-1] == "":
+        execute_command = lines[insert_index-1].replace("def ", "").replace(":", "")
         lines.append(execute_command)
 
     new_func = '\n'.join(lines)
