@@ -17,17 +17,14 @@ def bridge_cost_func(C: ry.Config, verbose: int=0):
     blue_block_error += np.abs((blue_block.getPosition()[2] - red_block.getPosition()[2]) - .06 - .02)
 
     # Rotations
-    blue_block_error += C.eval(ry.FS.scalarProductZZ, ["block_blue", "table"])[0][0]
-    height_diff = C.eval(ry.FS.positionDiff, ["l_gripper", "table"])[0][2]
-    height_correction_error =  100*max(0, height_diff - 0.23)**2  # Only penalize if above 20cm
-    total_cost = red_block_error + green_block_error + blue_block_error + height_correction_error
+    blue_block_error += np.abs(C.eval(ry.FS.scalarProductZZ, ["block_blue", "table"])[0][0])
+    total_cost = red_block_error + green_block_error + blue_block_error
 
     if verbose:
         print("+-------------------------------+")
         print("Red block error: ", red_block_error)
         print("Green block error: ", green_block_error)
         print("Blue block error: ", blue_block_error)
-        print("height_correction_error:", height_correction_error)
         print("Total cost: ", total_cost)
         print("+-------------------------------+")
 

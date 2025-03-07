@@ -49,21 +49,23 @@ class LLM_OUT_BBO_ENV:
 def compute_optimal_floats_on_code(cost_func,
                                    clean_code_text: str,
                                    C: ry.Config,
-                                   verbose: int=0) -> tuple[str, float]:
+                                   verbose: int=0,
+                                   bbo_options: dict=None) -> tuple[str, float]:
     
     problem = LLM_OUT_BBO_ENV(cost_func, clean_code_text, C, verbose)
     
     if problem.input_dim > 0:
         
         inital_state = problem.get_initial_state()
-        options = {
-            'popsize': 7,
-            'maxiter': 50,
-            'maxfevals': 5000,
-            'tolfun': 1e-4,
-            'tolx': 1e-5
-        }
-        result = cma.fmin(problem.compute_cost, inital_state, sigma0=.1, options=options)
+        if bbo_options == None:
+            bbo_options = {
+                'popsize': 7,
+                'maxiter': 50,
+                'maxfevals': 5000,
+                'tolfun': 1e-4,
+                'tolx': 1e-5
+            }
+        result = cma.fmin(problem.compute_cost, inital_state, sigma0=.1, options=bbo_options)
         
         if verbose:
             print("-- BBO Result:")
