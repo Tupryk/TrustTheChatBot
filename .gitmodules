@@ -1,0 +1,3 @@
+[submodule "TrustTheChatBot/Robotic_Manipulation"]
+	path = TrustTheChatBot/Robotic_Manipulation
+	url = https://github.com/Tupryk/Robotic_Manipulation
