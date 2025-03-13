@@ -1,3 +1,14 @@
+
+def cleanup_komo(original_func: str) -> str:
+    new_func = original_func
+    return new_func
+
+
+def cleanup_manip(original_func: str) -> str:
+    new_func = original_func
+    return new_func
+
+
 def cleanup_highlvl_func(original_func: str, compute_collisions: bool=True, visuals: bool=False) -> str:
 
     high_funcs = ["pick", "place", "push", "getObj"]

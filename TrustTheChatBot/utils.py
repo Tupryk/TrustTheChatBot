@@ -1,8 +1,14 @@
 import os
 import re
+import ast
 import time
+import numpy as np
 import robotic as ry
 import matplotlib.pyplot as plt
+
+
+def str_to_np_array(text: str) -> np.ndarray:
+    return np.array(ast.literal_eval(text), dtype=np.float32)
 
 
 def load_txt(file_path: str):

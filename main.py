@@ -8,7 +8,7 @@ def main():
     env = Enviroment(task_name="bridge", io="highlvl", use_images=False)
     solver = LLM(model_name="Qwen7B")
 
-    max_trial_count = 10
+    max_trial_count = 5
     for _ in range(max_trial_count):
         
         messages = env.get_messages()

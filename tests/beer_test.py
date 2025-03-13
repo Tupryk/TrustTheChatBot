@@ -6,7 +6,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from TrustTheChatBot.utils import load_txt
 from TrustTheChatBot.tasks.configurations import BeerScene
 from TrustTheChatBot.code_filters import cleanup_highlvl_func
-from TrustTheChatBot.high_level_funcs import RobotEnviroment
+from TrustTheChatBot.io.high_level_funcs import RobotEnviroment
 
 
 

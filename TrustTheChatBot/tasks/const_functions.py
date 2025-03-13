@@ -71,3 +71,31 @@ def romani_cost_func(C: ry.Config, verbose: int=0):
         print("+-------------------------------+")
 
     return total_cost
+
+
+def beer_cost_func(C: ry.Config, verbose: int=0):
+
+    beer = C.getFrame("beer")
+    glass = C.getFrame("glass")
+
+    beer_err_rot = np.abs(C.eval(ry.FS.scalarProductYY, ["table", "beer"])[0][0] - 1.)
+    glass_err_rot = 0
+    
+    a = glass.getPosition() + np.array([-0.03, 0.04, 0.05 + 0.12])
+    b = beer.getPosition()
+    beer_err_pos = np.linalg.norm(a-b)
+    glass_err_pos = 0
+
+    beer_error = beer_err_pos + beer_err_rot
+    glass_error = glass_err_pos + glass_err_rot
+
+    total_cost = beer_error + glass_error
+
+    if verbose:
+        print("+-------------------------------+")
+        print("Beer error rotation:", beer_err_rot)
+        print("Beer error position:", beer_err_pos)
+        print("Total cost: ", total_cost)
+        print("+-------------------------------+")
+
+    return total_cost

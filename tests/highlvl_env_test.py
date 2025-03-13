@@ -5,7 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import numpy as np
 from TrustTheChatBot.tasks.configurations import BridgeScene
-from TrustTheChatBot.high_level_funcs import RobotEnviroment
+from TrustTheChatBot.io.high_level_funcs import RobotEnviroment
 
 
 if __name__ == "__main__":

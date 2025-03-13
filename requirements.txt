@@ -1,0 +1,7 @@
+robotic==0.2.4
+numpy==2.2.1
+matplotlib==3.10.0
+line_profiler==4.2.0
+transformers==4.47.1
+qwen_vl_utils==0.0.8
+cma==4.0.0
