@@ -31,7 +31,7 @@ def compute_optimal_floats_on_code(problem: BBO_ENV,
             bbo_options = {
                 'popsize': 7,
                 'maxiter': 50,
-                'maxfevals': 5000,
+                'maxfevals': 100,
                 'tolfun': 1e-4,
                 'tolx': 1e-5
             }

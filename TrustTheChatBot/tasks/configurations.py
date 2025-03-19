@@ -27,7 +27,7 @@ def BridgeScene() -> tuple[ry.Config, list[str], str]:
                             not f.startswith("shelf_") and
                             not f.startswith("big_")]
     
-    camera_frame = "cameraTop"
+    camera_frame = "cameraFront"
     return C, relevant_frame_names, camera_frame
 
 
@@ -37,13 +37,6 @@ def BeerScene() -> tuple[ry.Config, list[str], str]:
 
     C.delFrame("panda_collCameraWrist")
     C.getFrame("table").setShape(ry.ST.ssBox, size=[1., 1., .1, .02])
-    
-    # C.addFrame("beer") \
-    #     .setShape(ry.ST.cylinder, [.19, .036]) \
-    #     .setPosition([-.1, 0., .75]) \
-    #     .setColor([1., 1., .3]) \
-    #     .setContact(1) \
-    #     .setMass(.1)
     
     C.addFrame("beer") \
         .setShape(ry.ST.ssBox, [.072, .072, .19, .05]) \
@@ -62,5 +55,5 @@ def BeerScene() -> tuple[ry.Config, list[str], str]:
     relevant_frame_names = [f for f in C.getFrameNames()
                             if not f.startswith("l_")]
     
-    camera_frame = "cameraTop"
+    camera_frame = "cameraFront"
     return C, relevant_frame_names, camera_frame

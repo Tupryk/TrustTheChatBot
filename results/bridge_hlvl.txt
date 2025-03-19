@@ -1,0 +1,38 @@
+def build_bridge():
+    # Get object properties
+    block_red = getObj("block_red")
+    block_green = getObj("block_green")
+    block_blue = getObj("block_blue")
+    
+    # Compute placement positions
+    support_x_offset = PLACEHOLDER_FLOAT  # Offset to adjust for proper spacing
+    support_y_offset = PLACEHOLDER_FLOAT  # Offset to adjust for alignment
+    top_z_offset = PLACEHOLDER_FLOAT  # Offset to place the top block above supports
+    
+    # Position for first support block (red)
+    red_target_x = block_red.pos.x + support_x_offset
+    red_target_y = block_red.pos.y + support_y_offset
+    red_target_z = block_red.pos.z  # Place it on the table
+    
+    # Position for second support block (green)
+    green_target_x = block_green.pos.x - support_x_offset
+    green_target_y = block_green.pos.y + support_y_offset
+    green_target_z = block_green.pos.z  # Place it on the table
+    
+    # Position for the horizontal block (blue) on top of supports
+    bridge_x = (red_target_x + green_target_x) / 2  # Centered between supports
+    bridge_y = (red_target_y + green_target_y) / 2  # Centered between supports
+    bridge_z = max(red_target_z, green_target_z) + block_blue.size.z + top_z_offset
+    
+    # Build the bridge
+    pick("block_red")
+    place(red_target_x, red_target_y, red_target_z)
+    
+    pick("block_green")
+    place(green_target_x, green_target_y, green_target_z)
+    
+    pick("block_blue")
+    place(bridge_x, bridge_y, bridge_z, rotated=False)
+    
+# Call the function
+build_bridge()

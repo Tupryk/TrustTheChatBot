@@ -11,7 +11,8 @@ place(x: float, y: float, z: float=.0, rotated: bool=False)
   - x (float): Target position on the x axis.
   - y (float): Target position on the y axis.
   - z (float)(default: 0): Target position on the z axis, if 0 it will be on top of the table.
-  - rotated (str)(default: False): Boolean to indicate if the object should be rotated.
+  - rotated (str)(default: False): Rotate the object 90 degrees in roll or pitch depending on current grasp direction.
+  - yaw (float)(default: None): Target yaw (if any).
 
 push(object_name: str, relative_x: float, relative_y: float)
 - Generates a motion plan to push an object towards a relative position to the object

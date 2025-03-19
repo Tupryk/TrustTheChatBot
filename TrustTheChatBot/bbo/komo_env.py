@@ -3,8 +3,8 @@ import ast
 import numpy as np
 import robotic as ry
 
-from simulator import Simulator
-from utils import str_to_np_array
+from TrustTheChatBot.simulator import Simulator
+from TrustTheChatBot.utils import str_to_np_array
 
 
 class LLM_OUT_BBO_ENV_KOMO:
@@ -15,8 +15,8 @@ class LLM_OUT_BBO_ENV_KOMO:
                  C: ry.Config,
                  scales: bool=False,
                  times: bool=False,
-                 targets: bool=False,
-                 features_to_be_optimized: list=["ry.FS.positionDiff"],
+                 targets: bool=True,
+                 features_to_be_optimized: list=[],
                  verbose: int=0
                  ):
         
@@ -26,9 +26,9 @@ class LLM_OUT_BBO_ENV_KOMO:
         self.ctrl_objectives = []
 
         for line in lines:
-            if line.startswith("komo."):
+            if "komo." in line:
 
-                if line.startswith("komo.addControlObjective"):
+                if "komo.addControlObjective" in line:
 
                     match = re.search(r'\((\[.*?\]|[^,]*),\s*([^,\s]*)\s*(?:,\s*([^)]*))?\)', line)
                     param1, param2, param3 = match.groups()
@@ -60,7 +60,7 @@ class LLM_OUT_BBO_ENV_KOMO:
 
                 self.objectives.append(objective_as_dict)
 
-            elif line.startswith("komo = "):
+            elif "komo = " in line:
                 init_params = line.split(",")
                 self.komo_init_params = [
                     float(init_params[1]),
@@ -75,6 +75,7 @@ class LLM_OUT_BBO_ENV_KOMO:
         self.features_to_be_optimized = features_to_be_optimized
         self.C = C
         self.verbose = verbose
+        self.input_dim = self.get_initial_state().shape[0]
         
 
     def build_komo(self, C0: ry.Config) -> ry.KOMO:
@@ -109,7 +110,7 @@ class LLM_OUT_BBO_ENV_KOMO:
         sim = Simulator(C2)
         xs, qs, xdots, qdots = sim.run_trajectory(q, 2, real_time=False)
 
-        cost = self.cost_func(C2, xs)
+        cost = self.cost_func(C2)
         del C2
         return cost
     
@@ -119,7 +120,7 @@ class LLM_OUT_BBO_ENV_KOMO:
         initial_state = np.array([])
 
         for obj in self.objectives:
-            if obj["feature"] in self.features_to_be_optimized:
+            if len(self.features_to_be_optimized) != 0 and obj["feature"] in self.features_to_be_optimized:
 
                 if self.scales and "scale" in obj.keys():
                     initial_state = np.concatenate((initial_state, obj["scale"]))

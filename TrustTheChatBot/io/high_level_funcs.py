@@ -58,8 +58,7 @@ class RobotEnviroment:
                  compute_collisions: bool=True,
                  on_real: bool=False,
                  use_botop: bool=False,
-                 use_sim: bool=True
-                 ):
+                 use_sim: bool=True):
         self.C = C
         if on_real:
             self.bot = ry.BotOp(self.C, on_real)
@@ -145,6 +144,107 @@ class RobotEnviroment:
         return False
 
 
+    def place_simple(self, x: float, y: float, z: float=.0, rotated: bool=False, yaw: float=None) -> bool:
+        if not self.feasible:
+            return False
+        
+        assert self.grabbed_frame != ""
+
+        table = "table"
+        palm = "l_palm"
+        table_frame = self.C.getFrame("table")
+        
+        if rotated and self.grasp_direction == 'x':
+            place_direction = ['y', 'yNeg']
+        elif rotated and self.grasp_direction == 'y':
+            place_direction = ['x', 'xNeg']
+        elif not rotated:
+            place_direction = ['z', 'zNeg']
+
+        feasible = False
+        Ms = []
+        for i, direction in enumerate(place_direction):
+            M = manip.ManipulationModelling()
+            M.setup_sequence(self.C, 1, accumulated_collisions=self.compute_collisions, homing_scale=.1)
+            
+            if not z:
+                M.place_box(1., self.grabbed_frame, table, palm, direction)
+                M.target_relative_xy_position(1., self.grabbed_frame, table, [x, y])
+            else:
+                table_offset = table_frame.getPosition()[2] + table_frame.getSize()[2]*.5
+                if z < table_offset:
+                    z += table_offset
+                M.place_box(1., self.grabbed_frame, table, palm, direction, on_table=False)
+                M.target_position(1., self.grabbed_frame, [x, y, z])
+
+            if yaw != None:
+
+                if direction == "x" or direction == "xNeg":
+                    feature = ry.FS.scalarProductXZ
+                elif direction == "y" or direction == "yNeg":
+                    feature = ry.FS.scalarProductXX
+                elif direction == "z" or direction == "zNeg":
+                    feature = ry.FS.scalarProductXX
+                else:
+                    raise Exception(f"'{place_direction}' is not a valid up vector for a place motion!")
+                
+                M.komo.addObjective([.8, 1.], feature, [table, self.grabbed_frame], ry.OT.eq, [1e1], [np.cos(yaw)])
+
+            M.solve(verbose=self.verbose)
+            Ms.append((M, M.ret.sos + M.ret.eq))
+            if M.feasible:    
+                feasible = True
+
+        Ms.sort(key=lambda x: x[1])  # Sort by cost (index 1)
+        if not feasible:    
+            self.feasible = False
+            return False
+
+        M = Ms[0][0]
+
+        M3 = M.sub_motion(0, accumulated_collisions=self.compute_collisions)
+        self.path = M3.solve(verbose=self.verbose)
+        if not M3.ret.feasible:
+            # M3.komo.report(plotOverTime=True)
+            # self.C.view(False)
+            self.feasible = False
+            return False
+
+        self.i += 1
+        if self.visuals:
+            M3.play(self.C)
+            self.C.attach(table, self.grabbed_frame)
+        
+        elif self.use_botop:
+            self.bot.move(self.path, [3.])
+            while self.bot.getTimeToEnd() > 0:
+                self.bot.sync(self.C)
+            self.bot.gripperMove(ry._left)
+            while not self.bot.gripperDone(ry._left):
+                self.bot.sync(self.C)
+            self.C.attach(table, self.grabbed_frame)
+
+        elif self.use_sim:
+            self.C.attach(table, self.grabbed_frame)
+
+            C2 = ry.Config()
+            C2.addConfigurationCopy(self.C)
+            sim = Simulator(C2)
+            xs, qs, xdots, qdots = sim.run_trajectory(self.path, 2, real_time=False, close_gripper=True)
+            
+            self.C.setJointState(qs[-1])
+            self.C.setFrameState(xs[-1])
+        
+        else:
+            qt = self.path[-1]
+            self.C.setJointState(qt)
+            self.C.attach(table, self.grabbed_frame)
+
+        self.grabbed_frame = ""
+        self.grasp_direction = ""
+        return True
+
+
     def place(self, x: float, y: float, z: float=.0, roll: float=None, pitch: float=None, yaw: float=None) -> bool:
         if not self.feasible:
             return False
@@ -203,8 +303,8 @@ class RobotEnviroment:
         M3 = M.sub_motion(0, accumulated_collisions=self.compute_collisions)
         self.path = M3.solve(verbose=self.verbose)
         if not M3.ret.feasible:
-            M3.komo.report(plotOverTime=True)
-            self.C.view(False)
+            # M3.komo.report(plotOverTime=True)
+            # self.C.view(False)
             self.feasible = False
             return False
 

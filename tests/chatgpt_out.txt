@@ -1,0 +1,3 @@
+komo = ry.KOMO(C, 1, 1, 0, True)
+komo.addObjective([], ry.FS.positionDiff, ['l_gripper', 'block_red'], ry.OT.eq, [1e1])
+komo.addObjective([], ry.FS.negDistance, ['l_palm', 'block_red'], ry.OT.ineq, [1e1], [-0.01])
