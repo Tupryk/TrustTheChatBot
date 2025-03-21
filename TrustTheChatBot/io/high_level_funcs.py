@@ -1,3 +1,4 @@
+import time
 import numpy as np
 import robotic as ry
 from TrustTheChatBot.simulator import Simulator
@@ -341,6 +342,92 @@ class RobotEnviroment:
         self.grabbed_frame = ""
         self.grasp_direction = ""
         return True
+    
+
+    def set_grabbed_frame_pose(self,
+              x: float=None,
+              y: float=None,
+              z: float=None,
+              roll: float=None,
+              pitch: float=None,
+              yaw: float=None) -> bool:
+        
+        if not self.feasible:
+            return False
+        
+        assert self.grabbed_frame != ""
+
+        table_frame = self.C.getFrame("table")
+
+        komo = ry.KOMO(self.C, 1, 32, 2, self.compute_collisions)
+        komo.addControlObjective([], 0, 1e-2)
+        komo.addControlObjective([], 1, 1e-1)
+        komo.addControlObjective([], 2, 1e-1)
+        komo.addObjective([], ry.FS.jointLimits, [], ry.OT.ineq, [1e0])
+        if self.compute_collisions:
+            komo.addObjective([], ry.FS.accumulatedCollisions, [], ry.OT.eq, [1e0])
+
+        if x != None:
+            komo.addObjective([1.], ry.FS.position, [self.grabbed_frame], ry.OT.eq, [1e1, 0, 0], [x, 0., 0.])
+        if y != None:
+            komo.addObjective([1.], ry.FS.position, [self.grabbed_frame], ry.OT.eq, [0, 1e1, 0], [0., y, 0.])
+        if z != None:
+            table_offset = table_frame.getPosition()[2] + table_frame.getSize()[2]*.5
+            if z < table_offset:
+                z += table_offset
+            komo.addObjective([1.], ry.FS.position, [self.grabbed_frame], ry.OT.eq, [0, 0, 1e1], [0., 0., z])
+        
+        if roll != None:
+            komo.addObjective([.8, 1.], ry.FS.scalarProductYY, ["table", self.grabbed_frame], ry.OT.eq, [1e1], [np.cos(roll)])
+            if pitch == None and yaw == None:
+                komo.addObjective([.8, 1.], ry.FS.vectorX, [self.grabbed_frame], ry.OT.eq, [1e1], [1., 0., 0.])
+        if pitch != None:
+            komo.addObjective([.8, 1.], ry.FS.scalarProductZZ, ["table", self.grabbed_frame], ry.OT.eq, [1e1], [np.cos(pitch)])
+            if roll == None and yaw == None:
+                komo.addObjective([.8, 1.], ry.FS.vectorY, [self.grabbed_frame], ry.OT.eq, [1e1], [0., 1., 0.])
+        if yaw != None:
+            komo.addObjective([.8, 1.], ry.FS.scalarProductXX, ["table", self.grabbed_frame], ry.OT.eq, [1e1], [np.cos(yaw)])
+            if roll == None and pitch == None:
+                komo.addObjective([.8, 1.], ry.FS.vectorZ, [self.grabbed_frame], ry.OT.eq, [1e1], [0., 0., 1.])
+
+        sol = ry.NLP_Solver()
+        sol.setProblem(komo.nlp())
+        sol.setOptions(damping=1e-1, verbose=self.verbose-1, stopTolerance=1e-3, maxLambda=100., stopInners=20, stopEvals=200)
+        ret = sol.solve()
+        if not ret.feasible:
+            self.feasible = False
+            return False
+
+        self.path = komo.getPath()
+
+        self.i += 1
+        if self.visuals:
+            for t in range(self.path.shape[0]):
+                self.C.setJointState(self.path[t])
+                self.C.view(False)
+                time.sleep(1/self.path.shape[0])
+        
+        elif self.use_botop:
+            self.bot.move(self.path, [3.])
+            while self.bot.getTimeToEnd() > 0:
+                self.bot.sync(self.C)
+
+        elif self.use_sim:
+
+            C2 = ry.Config()
+            C2.addConfigurationCopy(self.C)
+            sim = Simulator(C2)
+            xs, qs, xdots, qdots = sim.run_trajectory(self.path, 2, real_time=False, close_gripper=True)
+            
+            self.C.setJointState(qs[-1])
+            self.C.setFrameState(xs[-1])
+        
+        else:
+            qt = self.path[-1]
+            self.C.setJointState(qt)
+
+        return True
+
 
     def push(self, frame: str, relative_x: float, relative_y: float) -> bool:
 
@@ -401,6 +488,7 @@ class RobotEnviroment:
 
         return True
     
+
     def getObj(self, object_name: str) -> RAIObj:
         obj = RAIObj(self.C, object_name)
         return obj

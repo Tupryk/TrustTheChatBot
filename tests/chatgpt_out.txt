@@ -1,3 +1,38 @@
-komo = ry.KOMO(C, 1, 1, 0, True)
-komo.addObjective([], ry.FS.positionDiff, ['l_gripper', 'block_red'], ry.OT.eq, [1e1])
-komo.addObjective([], ry.FS.negDistance, ['l_palm', 'block_red'], ry.OT.ineq, [1e1], [-0.01])
+def build_bridge():
+    # Get block information
+    red_block = getObj('block_red')
+    green_block = getObj('block_green')
+    blue_block = getObj('block_blue')
+
+    # Determine which two blocks will be the "legs" of the bridge
+    leg1 = red_block
+    leg2 = green_block
+    top_block = blue_block
+
+    # Calculate placement positions
+    leg1_x = leg1.pos.x
+    leg1_y = leg1.pos.y
+
+    # Place second leg at an appropriate distance
+    leg2_x = leg1_x + leg1.size.x + PLACEHOLDER_FLOAT  # Ensure a gap for the top block
+    leg2_y = leg1_y  
+
+    # Pick and place the first leg
+    pick('block_red')
+    place(leg1_x, leg1_y, leg1.size.z / 2 + PLACEHOLDER_FLOAT)
+
+    # Pick and place the second leg
+    pick('block_green')
+    place(leg2_x, leg2_y, leg2.size.z / 2 + PLACEHOLDER_FLOAT)
+
+    # Calculate the position of the top block
+    top_x = (leg1_x + leg2_x) / 2  # Centered between the two legs
+    top_y = (leg1_y + leg2_y) / 2  # Keep same y-coordinate
+    top_z = leg1.size.z + top_block.size.z / 2 + PLACEHOLDER_FLOAT  # On top of the legs
+
+    # Pick and place the top block
+    pick('block_blue')
+    place(top_x, top_y, top_z, yaw=0)  # Ensure correct yaw alignment
+
+# Call the function to execute the task
+build_bridge()

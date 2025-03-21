@@ -1,0 +1,30 @@
+komo = ry.KOMO(C, phases=3, slicesPerPhase=10, kOrder=2, enableCollisions=True)
+
+# Control objectives for smooth motion
+komo.addControlObjective([], 0, 1e-1)  # Minimize position deviation
+komo.addControlObjective([], 2, 1e0)   # Minimize acceleration
+
+# Grasp and stack blocks sequentially
+blocks = ['block_red', 'block_green', 'block_blue']
+heights = [0.05, 0.10, 0.15]  # Heights to stack at
+
+for i, block in enumerate(blocks):
+    grasp_time = i + 1
+    place_time = i + 2
+    
+    # Move to block position
+    komo.addObjective([grasp_time], ry.FS.positionDiff, ['l_gripper', block], ry.OT.eq, [1e1])
+    
+    # Grasp block
+    komo.addModeSwitch([grasp_time, place_time], ry.SY.stable, ['l_gripper', block])
+    
+    # Move to stacking position
+    komo.addObjective([place_time], ry.FS.positionDiff, [block, 'table'], ry.OT.eq, [1e1], [0, 0, heights[i]])
+    komo.addObjective([place_time], ry.FS.vectorZ, ['l_gripper'], ry.OT.eq, [1e2], [0., 0., 1.])
+    
+    # Release block
+    komo.addModeSwitch([place_time, -1], ry.SY.stable, ['table', block])
+    
+    # Move gripper away after placing
+    komo.addObjective([place_time], ry.FS.qItself, [], ry.OT.eq, [], [], 1)
+    komo.addObjective([place_time - 0.1, place_time + 0.1], ry.FS.position, ['l_gripper'], ry.OT.eq, [], [0., 0., .1], 2)

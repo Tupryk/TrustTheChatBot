@@ -25,3 +25,12 @@ push(object_name: str, relative_x: float, relative_y: float)
 getObj(object_name: str)
 - Returns an object from which you can query the following parameters: pos.x, pos.y, pos.z, size.x, size.y, size.z
   - object_name (str): The frame name of the object to be queried.
+
+set_grabbed_frame_pose(x: float=None, y: float=None, z: float=None, roll: float=None, pitch: float=None, yaw: float=None)
+- Sets the pose of a grabbed frame. Requires to first pick up a frame.
+  - x (float)(default: None): Target position on the x axis.
+  - y (float)(default: None): Target position on the y axis.
+  - z (float)(default: None): Target position on the z axis, if 0 it will be on top of the table.
+  - roll (float)(default: None): Target roll (if any).
+  - pitch (float)(default: None): Target pitch (if any).
+  - yaw (float)(default: None): Target yaw (if any).

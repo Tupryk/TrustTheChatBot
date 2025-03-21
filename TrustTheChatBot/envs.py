@@ -112,7 +112,7 @@ class Enviroment:
         #     return False
     
         # Black Box Optimization
-        bbo_env = self.bbo_env_type(self.cost_func, code_text, self.C)
+        bbo_env = self.bbo_env_type(self.cost_func, code_text, self.C, self.verbose)
         final_code, final_cost = compute_optimal_floats_on_code(bbo_env, code_text)
         if final_cost >= self.error_thresh:
             failed_mess = "It seems like your proposed solution did not solve the problem. Try again."

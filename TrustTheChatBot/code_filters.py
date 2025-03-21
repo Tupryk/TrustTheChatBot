@@ -11,7 +11,7 @@ def cleanup_manip(original_func: str) -> str:
 
 def cleanup_highlvl_func(original_func: str, compute_collisions: bool=True, visuals: bool=False) -> str:
 
-    high_funcs = ["pick", "place", "push", "getObj", "place_simple"]
+    high_funcs = ["pick", "place", "push", "getObj", "place_simple", "set_grabbed_frame_pose"]
 
     lines = original_func.split('\n')
 
@@ -24,7 +24,7 @@ def cleanup_highlvl_func(original_func: str, compute_collisions: bool=True, visu
     lines.insert(insert_index, new_line)
 
     # Execute the function if it is not yet being executed in the code
-    if lines[-2].startswith(" "*4) or lines[-2].startswith("\t"):
+    if lines[-1].startswith(" ") or lines[-1].startswith("\t") or lines[-1] == "":
         execute_command = lines[insert_index-1].replace("def ", "").replace(":", "")
         lines.append(execute_command)
 

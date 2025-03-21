@@ -39,7 +39,7 @@ def BeerScene() -> tuple[ry.Config, list[str], str]:
     C.getFrame("table").setShape(ry.ST.ssBox, size=[1., 1., .1, .02])
     
     C.addFrame("beer") \
-        .setShape(ry.ST.ssBox, [.072, .072, .19, .05]) \
+        .setShape(ry.ST.ssBox, [.04, .04, .19, .05]) \
         .setPosition([-.1, 0., .75]) \
         .setColor([1., 1., .3]) \
         .setContact(1) \

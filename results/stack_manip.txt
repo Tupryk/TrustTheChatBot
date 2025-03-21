@@ -1,0 +1,47 @@
+gripper = "l_gripper"
+table = "table"
+blocks = ["block_red", "block_green", "block_blue"]
+
+
+def stack_blocks(blocks: list[str], start_pos: list[float], vis: bool = False) -> bool:
+    M = manip.ManipulationModelling(C, "stacking_blocks", [gripper])
+    tower_height = 0.05  # Approximate height of each block
+    
+    for i, block in enumerate(blocks):
+        pick_height = tower_height * i  # Adjust the z-position for stacking
+        place_position = [start_pos[0], start_pos[1], pick_height + tower_height]
+        
+        M.setup_pick_and_place_waypoints(gripper, block, homing_scale=1e-1)
+        M.grasp_box(1., gripper, block, "l_palm", "z")
+        M.place_box(2., block, table if i == 0 else blocks[i - 1], "l_palm", "z")
+        M.target_relative_xy_position(2., block, table if i == 0 else blocks[i - 1], place_position)
+        M.solve()
+        
+        if not M.feasible:
+            return False
+        
+        M1 = M.sub_motion(0)
+        M1.keep_distance([.3, .7], "l_palm", block, margin=.05)
+        M1.retract([.0, .2], gripper)
+        M1.approach([.8, 1.], gripper)
+        path1 = M1.solve()
+        if not M1.feasible:
+            return False
+        
+        M2 = M.sub_motion(1)
+        M2.keep_distance([], table, "cameraWrist")
+        M2.keep_distance([.2, .8], table, block, .04)
+        M2.keep_distance([], "l_palm", block)
+        path2 = M2.solve()
+        if not M2.feasible:
+            return False
+        
+        if vis:
+            M1.play(C, 1.)
+            C.attach(gripper, block)
+            M2.play(C, 1.)
+            C.attach(table if i == 0 else blocks[i - 1], block)
+    
+    return True
+
+stack_blocks(blocks, [0.0, 0.0, 0.0], vis=True)

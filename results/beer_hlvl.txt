@@ -1,0 +1,24 @@
+def pour_beer():
+    # Get beer and glass object data
+    beer = getObj("beer")
+    glass = getObj("glass")
+
+    # Pick up the beer
+    pick("beer")
+
+    # Compute the pouring position (above the glass)
+    target_x = glass.pos.x + PLACEHOLDER_FLOAT  # Offset to align center
+    target_y = glass.pos.y + PLACEHOLDER_FLOAT  # Small offset for tilting
+    target_z = glass.pos.z + glass.size.z / 2 + beer.size.z / 2 + PLACEHOLDER_FLOAT  # Above the glass
+
+    # Compute pouring angle (tilting downwards)
+    pour_pitch = PLACEHOLDER_FLOAT  # Tilt forward for pouring
+
+    # Move beer to pouring position and tilt
+    set_grabbed_frame_pose(x=target_x, y=target_y, z=target_z, pitch=pour_pitch)
+
+    # (Optional) Wait or simulate time for pouring
+
+    # Place beer back on the table
+    place(beer.pos.x, beer.pos.y, z=beer.pos.z)
+

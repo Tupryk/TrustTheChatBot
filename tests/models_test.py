@@ -13,7 +13,7 @@ if __name__ == "__main__":
     solver = LLM(model_name="Qwen7B")
 
     messages = []
-    message = build_message("user", "How many r's are in strawberry?")
+    message = build_message("user", "The task for the robot was to build a bridge. Was the task solved correctly?", "./tests/test_images/rescaled/bridge_success.jpg")
     messages.append(message)
     
     text_out = solver.send(messages)

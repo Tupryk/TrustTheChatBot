@@ -9,7 +9,7 @@ from TrustTheChatBot.envs import Enviroment
 
 if __name__ == "__main__":
     
-    env = Enviroment(task_name="bridge", io="komo", use_images=False, verbose=1)
+    env = Enviroment(task_name="bridge", io="highlvl", use_images=False, verbose=1)
 
     messages = env.get_messages()
     

@@ -118,3 +118,34 @@ komo.addObjective([4], ry.FS.jointState, [], ry.OT.eq, [1e1], [], order=1)
 ```
 
 Notice the new last objective! Without it, final velocity would not be zero. The last objective constrains the order=1 (i.e. velocity!) of the jointState feature to be zero.
+
+Mode switches define some time interval in which two frames are attached to each other. The following is an example of how to use mode switches for grasping.
+```
+komo = ry.KOMO()
+
+komo.setModel(C, False)
+komo.setTiming(2.5, 30, 5., 2)
+
+komo.add_qControlObjective([], 2)
+
+komo.addQuaternionNorms([], 3.)
+
+#grasp
+komo.addModeSwitch([1., 2.], ry.SY.stable, ["gripper", "box"])
+komo.addObjective([1.], ry.FS.positionDiff, ["gripper", "box"], ry.OT.eq, [1e2])
+komo.addObjective([1.], ry.FS.scalarProductXX, ["gripper", "box"], ry.OT.eq, [1e2], [0.])
+komo.addObjective([1.], ry.FS.vectorZ, ["gripper"], ry.OT.eq, [1e2], [0., 0., 1.])
+
+#slow - down - up
+komo.addObjective([1.], ry.FS.qItself, [], ry.OT.eq, [], [], 1)
+komo.addObjective([.9,1.1], ry.FS.position, ["gripper"], ry.OT.eq, [], [0.,0.,.1], 2)
+
+#place
+komo.addModeSwitch([2., -1.], ry.SY.stable, ["table", "box"])
+komo.addObjective([2.], ry.FS.positionDiff, ["box", "table"], ry.OT.eq, [1e2], [0,0,.08])
+komo.addObjective([2.], ry.FS.vectorZ, ["gripper"], ry.OT.eq, [1e2], [0., 0., 1.])
+
+#slow - down - up
+komo.addObjective([2.], ry.FS.qItself, [], ry.OT.eq, [], [], 1)
+komo.addObjective([1.9,2.2], ry.FS.position, ["gripper"], ry.OT.eq, [], [0.,0.,.1], 2)
+```
