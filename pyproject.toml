@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "TrustTheChatBot"
+version = "0.1.0"
+description = "A chatbot-related module with various dependencies."
+authors = [
+    { name = "Your Name", email = "your.email@example.com" }
+]
+dependencies = [
+    "robotic==0.2.4",
+    "numpy==2.2.1",
+    "matplotlib==3.10.0",
+    "line_profiler==4.2.0",
+    "transformers==4.47.1",
+    "qwen_vl_utils==0.0.8",
+    "cma==4.0.0",
+    "bitsandbytes==0.45.3",
+    "accelerate==1.5.2",
+    "torch==2.6.0",
+    "torchvision==0.21.0"
+]
+
+[project.optional-dependencies]
+development = [
+    "black",
+    "flake8",
+    "pytest"
+]
+
+docs = [
+    "sphinx",
+    "myst-parser"
+]
+
+[tool.setuptools]
+packages = ["TrustTheChatBot"]

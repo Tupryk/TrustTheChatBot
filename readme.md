@@ -11,6 +11,7 @@ git submodule update
 Install the necessary dependencies
 ```
 pip install -r requirements.txt
+pip install -e .
 ```
 Add a front facing camera to your pandaSingle.g scene if you use scene images for inference.
 ```

@@ -6,3 +6,4 @@ z.komoReport.plt
 z.komoData
 z.plotcmd
 chat_log.json
+*.egg-info
