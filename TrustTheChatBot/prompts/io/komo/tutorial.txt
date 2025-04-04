@@ -45,9 +45,9 @@ You can only use features from the list below!
 | `position` | [A] | 3 | 3D position of A in world coordinates |
 | `positionDiff` | [A,B] | 3 | Difference of 3D positions of A and B in world coordinates |
 | `positionRel` | [A,B] | 3 | 3D position of A in B-coordinates |
-| `quaternion` | [A] | 4 | 4D quaternion of A in world coordinates |
-| `quaternionDiff` | [A,B] | 4 | Difference of quaternions |
-| `quaternionRel` | [A,B] | 4 | Quaternion of A relative to B |
+| `quaternion` | [A] | 4 | 4D quaternion of A in world coordinates. All quaternions follow wxyz convention and must be normalized to have w=1. |
+| `quaternionDiff` | [A,B] | 4 | Difference of quaternions. All quaternions follow wxyz convention and must be normalized to have w=1. |
+| `quaternionRel` | [A,B] | 4 | Quaternion of A relative to B. All quaternions follow wxyz convention and must be normalized to have w=1. |
 | `pose` | [A] | 7 | 7D pose of A in world coordinates |
 | `poseDiff` | [A,B] | 7 | Difference of poses |
 | `poseRel` | [A,B] | 7 | Pose of A relative to B |

@@ -42,9 +42,10 @@ class LLM_OUT_BBO_KOMO_SIMPLE:
         namespace = globals().copy()
         namespace.update(locals())
         exec(full_text, namespace)
+
         cost = self.cost_func(config, self.verbose)
-        if show:
-            config.view(True)
+        # if show:
+        #     config.view(True)
 
         del config
         return cost

@@ -13,20 +13,20 @@ REPO_PATH = Path(os.environ['REPO_PATH'])
 
 def main():
     
-    env = Enviroment(task_name="bridge", io="komo", use_images=True, verbose=True)
-    solver = OpenAiModel(model_name="gpt-4o")
+    env = Enviroment(task_name="bridge", io="komo", use_images=True, verbose=False)
+    solver = OpenAiModel(model_name="gpt-4o", max_output_tokens=2048)
 
     max_trial_count = 5
     for i in range(max_trial_count):
 
         print(f"---------------- Attempt Number {i+1} ----------------")
         messages = env.get_messages()
-        # text_out = solver.send(messages)
-        # Debug
-        with open(REPO_PATH / "TrustTheChatBot" / "prompts" / "io" / "komo" / "dummy_response.txt", "r") as f:
-            text_out = f.read()
+        text_out = solver.send(messages)
         print(text_out)
-        
+        # # Debug
+        # with open(REPO_PATH / "TrustTheChatBot" / "prompts" / "io" / "komo" / "dummy_response.txt", "r") as f:
+        #     text_out = f.read()
+
         success = env.run(text_out)
         if success: break
         print("Failed! Here is the enviroment feedback: ")

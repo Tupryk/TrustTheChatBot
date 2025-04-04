@@ -1,5 +1,6 @@
-ret = ry.NLP_Solver(komo.nlp(), verbose=2).solve()
+ret = ry.NLP_Solver(komo.nlp(), verbose=4).solve()
 q = komo.getPath()
+komo.view(True, "IK solution")
 print(q)
 sim = Simulator(config)
-xs, qs, xdots, qdots = sim.run_trajectory(q, 2, real_time=False)
+xs, qs, xdots, qdots = sim.run_trajectory(q, n_phases, real_time=True)

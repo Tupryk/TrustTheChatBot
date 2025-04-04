@@ -11,6 +11,9 @@ from TrustTheChatBot.utils import load_txt, build_message, take_picture, extract
 from TrustTheChatBot.io.high_level_funcs import RobotEnviroment
 
 
+REPO_PATH = Path(os.environ["REPO_PATH"])
+
+
 class Enviroment:
 
     def __init__(self,
@@ -20,10 +23,10 @@ class Enviroment:
                  verbose: int=0):
         
         # Loading prompts
-        tutorial = load_txt(f"./TrustTheChatBot/prompts/io/{io}/tutorial.txt")
-        global_text = load_txt(f"./TrustTheChatBot/prompts/io/{io}/problem_definition.txt")
-        task_description = load_txt(f"./TrustTheChatBot/prompts/tasks/{task_name}/task_description.txt")
-        scene_description = load_txt(f"./TrustTheChatBot/prompts/tasks/{task_name}/scene_description.txt")
+        tutorial = load_txt(REPO_PATH / f"TrustTheChatBot/prompts/io/{io}/tutorial.txt")
+        global_text = load_txt(REPO_PATH / f"TrustTheChatBot/prompts/io/{io}/problem_definition.txt")
+        task_description = load_txt(REPO_PATH / f"TrustTheChatBot/prompts/tasks/{task_name}/task_description.txt")
+        scene_description = load_txt(REPO_PATH / f"TrustTheChatBot/prompts/tasks/{task_name}/scene_description.txt")
 
         # Loading task scenes and cost functions
         if task_name == "bridge":
@@ -45,6 +48,7 @@ class Enviroment:
         if io == "komo":
             self.code_filter = lambda text: cleanup_komo(text)
             self.bbo_env_type = LLM_OUT_BBO_KOMO_SIMPLE
+            # self.bbo_env_type = LLM_OUT_BBO_ENV_KOMO
 
         elif io == "manip":
             self.code_filter = lambda text: cleanup_manip(text)
