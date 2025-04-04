@@ -1,0 +1,5 @@
+komo = ry.KOMO(config, n_phases, 10, 2, True)
+# komo.addObjective([], ry.FS.accumulatedCollisions, [], ry.OT.eq)
+# komo.addObjective([], ry.FS.jointLimits, [], ry.OT.ineq)
+komo.addControlObjective([], 0, 1e-1)
+komo.addControlObjective([], 1, 1e0)

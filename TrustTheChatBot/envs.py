@@ -1,4 +1,6 @@
 import numpy as np
+
+from TrustTheChatBot.bbo.komo_simple import LLM_OUT_BBO_KOMO_SIMPLE
 from TrustTheChatBot.code_filters import *
 from TrustTheChatBot.tasks.configurations import *
 from TrustTheChatBot.tasks.const_functions import *
@@ -21,6 +23,7 @@ class Enviroment:
         tutorial = load_txt(f"./TrustTheChatBot/prompts/io/{io}/tutorial.txt")
         global_text = load_txt(f"./TrustTheChatBot/prompts/io/{io}/problem_definition.txt")
         task_description = load_txt(f"./TrustTheChatBot/prompts/tasks/{task_name}/task_description.txt")
+        scene_description = load_txt(f"./TrustTheChatBot/prompts/tasks/{task_name}/scene_description.txt")
 
         # Loading task scenes and cost functions
         if task_name == "bridge":
@@ -41,7 +44,7 @@ class Enviroment:
         # Loading output code type
         if io == "komo":
             self.code_filter = lambda text: cleanup_komo(text)
-            self.bbo_env_type = LLM_OUT_BBO_ENV_KOMO
+            self.bbo_env_type = LLM_OUT_BBO_KOMO_SIMPLE
 
         elif io == "manip":
             self.code_filter = lambda text: cleanup_manip(text)
@@ -62,10 +65,14 @@ class Enviroment:
 
         # Contruct message list
         self.messages = []
-        initial_prompt = tutorial + "\n" + global_text + "\n" + task_description + "\n"
-        initial_prompt += f"Here is a list of all available object names: {frame_names}"
-        initial_prompt = build_message("user", initial_prompt, image_path=im_path)
+        initial_prompt = tutorial + "\n" + global_text + "\n"
+        initial_prompt = build_message("system", initial_prompt)
         self.messages.append(initial_prompt)
+
+        # task
+        task_prompt = scene_description + "\n" + task_description + "\n"
+        task_prompt = build_message("user", task_prompt)  # TODO: for images we need to add proper encoding
+        self.messages.append(task_prompt)
         
         self.camera_frame = camera_frame
         self.use_images = use_images
@@ -89,13 +96,12 @@ class Enviroment:
     def run(self, llm_text: str) -> bool:
 
         # Store LLM message
-        llm_mess = build_message("system", llm_text)
+        llm_mess = build_message("assistant", llm_text)
         self.messages.append(llm_mess)
 
         # Extract code from text and clean the code
         code_text = extract_code_block(llm_text)
         code_text = self.code_filter(code_text)
-        if self.verbose: print(code_text)
 
         # Check for errors in code
         bbo_env = self.bbo_env_type(self.cost_func, code_text, self.C)
@@ -130,6 +136,7 @@ class Enviroment:
         self.final_code = final_code
         if self.verbose > 0:
             print("Final Cost: ", final_cost)
+
         return True
     
     
@@ -137,9 +144,9 @@ class Enviroment:
         if not self.solved:
             raise Exception("Task was not solved yet!")
         
-        global C_copy
-        C_copy = ry.Config()
-        C_copy.addConfigurationCopy(self.C)
+        global config
+        config = ry.Config()
+        config.addConfigurationCopy(self.C)
 
         executable_string = self.final_code
 
@@ -152,8 +159,8 @@ class Enviroment:
             
             executable_string = '\n'.join(lines)
 
-        executable_string = executable_string.replace("(C, ", "(C_copy, ")
+        # executable_string = executable_string.replace("(C, ", "(C_copy, ")
 
         exec(executable_string, globals(), locals())
-        C_copy.view(True)
+        config.view(True)
         

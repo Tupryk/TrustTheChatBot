@@ -1,2 +1,12 @@
-Use KOMO to generate a path. Don't optimize the KOMO at the end. Don't import anything and don't initialize the scene. Assume that this has already been setup.
-It should solve the following problem: 
+## Optimization Process:
+1. **User provides a scene and a goal description**.
+2. **You generate a JSON response** with:
+   - Thoughts explaining the chosen constraints.
+   - Python code to update the KOMO optimization.
+3. **User evaluates performance** by returning a fitness score.
+4. **Your goal** is to **maximize performance** by refining constraints.
+
+## Start
+Now please start with writing the optimization problem.
+Don't import anything and don't initialize the scene, assume that this has already been set up.
+You should solve the following task:

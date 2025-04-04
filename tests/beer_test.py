@@ -10,6 +10,7 @@ from TrustTheChatBot.io.high_level_funcs import RobotEnviroment
 
 
 
+
 if __name__ == "__main__":
 
     C, _, _ = BeerScene()

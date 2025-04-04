@@ -8,3 +8,5 @@ z.plotcmd
 chat_log.json
 *.egg-info
 .idea/
+.env
+.venv/

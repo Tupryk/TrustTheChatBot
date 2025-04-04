@@ -20,14 +20,14 @@ def load_txt(file_path: str):
 def build_message(role: str, text: str, image_path: str="") -> dict:
     message = {
         "role": role,
-        "content": [],
+        "content": [],  # TODO: investigate whether this list format is really suitable for out purposes
     }
     if text:
         message["content"].append({
             "type": "text",
             "text": text,
         })
-    if image_path:
+    if len(image_path) > 0:
         message["content"].append({
             "type": "image",
             "image": image_path,

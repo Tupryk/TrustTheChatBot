@@ -1,0 +1,16 @@
+{
+  "thought": "To create a bridge from the three blocks, I need to first position the two parallel blocks ('block_red' and 'block_green') such that they are adequately spaced apart to allow 'block_blue' to be placed horizontally on top. I will also need to ensure that 'block_blue' is aligned correctly above the two supporting blocks. This requires careful placement and orientation constraints, as well as ensuring that the blocks do not collide with the robot's gripper during the process. I will set up two phases: one for positioning the supporting blocks and another for placing the horizontal block.",
+  "n_phases": "2",
+  "code": "
+# Phase 1: Grasp and place block_red on the table as one of the parallel bases
+komo.addObjective([1], ry.FS.positionDiff, ['l_gripper', 'block_red'], ry.OT.eq, [1e1])
+komo.addObjective([], ry.FS.scalarProductXX, ['l_gripper', 'block_red'], ry.OT.eq, [1e1], [0])
+komo.addObjective([], ry.FS.scalarProductXZ, ['l_gripper', 'block_red'], ry.OT.eq, [1e1], [0])
+komo.addObjective([1], ry.FS.distance, ['l_palm', 'block_red'], ry.OT.ineq, [1e1])
+komo.addModeSwitch([1, 2], ry.SY.stable, ['l_gripper', 'block_red'])
+komo.addObjective([1, 2], ry.FS.position, ['block_red'], ry.OT.eq, [0, 0, 1], [0, 0, 1])
+
+# Phase 2: Position block_red on the table
+komo.addObjective([2], ry.FS.positionDiff, ['block_red', 'table'], ry.OT.eq, 1e1*np.array([[1, 0, 0]]), np.array([.1, .0, .0]))
+"
+}

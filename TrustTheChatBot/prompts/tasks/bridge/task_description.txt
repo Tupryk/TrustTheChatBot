@@ -1,1 +1,5 @@
-Build a bridge. A bridge is defined as two parallel blocks, and one horizontal block on top of them. Make sure that the two parallel blocks have an appropriate distance to each other, such that the horizontal block can be placed on top. Also make sure that the yaw and up_vec of the horizontal block make sense.
+Instruction:
+Build a bridge from the three blocks in the scene.
+A bridge is defined as two parallel blocks, and one horizontal block on top of them.
+Make sure that the two parallel blocks have an appropriate distance to each other, such that the horizontal block can be placed on top.
+When you grasp blocks make sure that you attach them properly as explained above.

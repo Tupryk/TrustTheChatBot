@@ -2,7 +2,7 @@ import time
 import numpy as np
 import robotic as ry
 from TrustTheChatBot.simulator import Simulator
-import TrustTheChatBot.Robotic_Manipulation.manipulation as manip
+# import TrustTheChatBot.Robotic_Manipulation.manipulation as manip
 
 
 class RAIVec:
